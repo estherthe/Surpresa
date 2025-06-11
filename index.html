@@ -10,7 +10,7 @@
       overflow: hidden;
       background-color: black;
     }
-    #mensagem {
+    #mensagem, #etapa-final {
       position: absolute;
       top: 20px;
       width: 100%;
@@ -21,7 +21,19 @@
       display: none;
       animation: fadeIn 3s ease-in forwards;
     }
-    #quiz {
+    #botao {
+      position: absolute;
+      top: 80%;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 10px 20px;
+      font-size: 18px;
+      background-color: pink;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    #quiz-container {
       position: absolute;
       top: 20%;
       left: 50%;
@@ -33,8 +45,9 @@
       background-color: rgba(0,0,0,0.7);
       padding: 20px;
       border-radius: 10px;
+      display: none;
     }
-    #quiz button {
+    #quiz-container button {
       margin-top: 15px;
       padding: 10px 20px;
       font-size: 18px;
@@ -50,64 +63,124 @@
   </style>
 </head>
 <body>
-  <div id="mensagem">Feliz Dia dos Namorados, Gih! 💕<br>Te amo daqui até a Lua 🌕 <br>Você é a pessoa dos meus sonhos!.</div>
-
-    <div id="quiz1">
-    <p>Quando é meu aniversário?</p>
-    <label><input type="radio" name="resposta" value="errado"> 11/10</label><br>
-    <label><input type="radio" name="resposta" value="errado"> 08/08</label><br>
-    <label><input type="radio" name="resposta" value="certo"> 14/11</label><br>
-    <label><input type="radio" name="resposta" value="errado"> 08/03</label><br>
-    <button onclick="verificarResposta()">Confirmar</button>
-  </div>
-  
-    <div id="quiz2">
-    <p>Qual é minha cor favorita?</p>
-    <label><input type="radio" name="resposta" value="errado"> Azul</label><br>
-    <label><input type="radio" name="resposta" value="errado"> Rosa</label><br>
-    <label><input type="radio" name="resposta" value="errado"> Verde</label><br>
-    <label><input type="radio" name="resposta" value="certo"> Azul da cor dos meus olhos</label><br>
-    <button onclick="verificarResposta()">Confirmar</button>
+  <div id="mensagem">
+    Feliz Dia dos Namorados, Gih! 💕<br>
+    Você acertou <span id="acertos"></span> de 4 perguntas!<br>
+    Te amo daqui até a Lua 🌕<br>
+    Você é a pessoa dos meus sonhos!
   </div>
 
-  <div id="quiz3">
-    <p>Qual é minha cor favorita?</p>
-    <label><input type="radio" name="resposta" value="errado"> Azul</label><br>
-    <label><input type="radio" name="resposta" value="errado"> Rosa</label><br>
-    <label><input type="radio" name="resposta" value="errado"> Verde</label><br>
-    <label><input type="radio" name="resposta" value="certo"> Azul da cor dos meus olhos</label><br>
-    <button onclick="verificarResposta()">Confirmar</button>
+  <div id="etapa-final">
+    Agora vamos ver se você lembra da gente 😍
   </div>
-  
-    <div id="quiz3">
-    <p>Qual é o apelido carinhoso que eu mais uso com você?</p>
-    <label><input type="radio" name="resposta" value="errado"> Gih</label><br>
-    <label><input type="radio" name="resposta" value="errado"> Gigi</label><br>
-    <label><input type="radio" name="resposta" value="certo"> Peidorreira</label><br>
-    <label><input type="radio" name="resposta" value="errado"> Bb</label><br>
-    <button onclick="verificarResposta()">Confirmar</button>
+
+  <button id="botao">Clique para a surpresa 💌</button>
+
+  <div id="quiz-container">
+    <p id="pergunta"></p>
+    <div id="opcoes"></div>
+    <button onclick="proximaPergunta()">Confirmar</button>
   </div>
-  
+
   <script>
     let mostrarFlor = false;
     let k = 5;
 
-    function verificarResposta() {
-      const opcoes = document.getElementsByName("resposta");
-      let respostaCerta = false;
-      for (let opcao of opcoes) {
-        if (opcao.checked && opcao.value === "certo") {
-          respostaCerta = true;
+    let perguntaAtual = 0;
+    let acertos = 0;
+    let etapa = 1; // 1 = primeira metade, 2 = segunda
+
+    const quizzesEtapa1 = [
+      {
+        pergunta: "Qual é minha cor favorita?",
+        opcoes: ["Azul céu", "Azul da cor dos meus olhos", "Roxo", "Verde"],
+        correta: 2
+      },
+      {
+        pergunta: "Quando é meu aniversário?",
+        opcoes: ["14/10", "08/03", "14/11", "08/10"],
+        correta: 3
+      }
+    ];
+
+    const quizzesEtapa2 = [
+        {
+        pergunta: "Qual é o apelido carinhoso que eu mais uso com você?",
+        opcoes: ["Princesa", "Peidorreira", "Amor da minha vida 💖", "Bb"],
+        correta: 2
+      },
+      {
+        pergunta: "Quando foi o nosso primeiro beijo?",
+        opcoes: ["14/11/2024", "11/10/2024", "08/08/2024", "08/03/2024"],
+        correta: 3
+      },
+
+    let quizzes = [];
+
+    document.getElementById("botao").onclick = () => {
+      document.getElementById("botao").style.display = "none";
+      quizzes = quizzesEtapa1;
+      perguntaAtual = 0;
+      etapa = 1;
+      document.getElementById("quiz-container").style.display = "block";
+      mostrarPergunta();
+    };
+
+    function mostrarPergunta() {
+      const quiz = quizzes[perguntaAtual];
+      document.getElementById("pergunta").textContent = quiz.pergunta;
+      const opcoesDiv = document.getElementById("opcoes");
+      opcoesDiv.innerHTML = "";
+      quiz.opcoes.forEach((texto, i) => {
+        const label = document.createElement("label");
+        label.innerHTML = `<input type="radio" name="resposta" value="${i}"> ${texto}<br>`;
+        opcoesDiv.appendChild(label);
+      });
+    }
+
+    function proximaPergunta() {
+      const respostas = document.getElementsByName("resposta");
+      let selecionada = -1;
+      for (let r of respostas) {
+        if (r.checked) {
+          selecionada = parseInt(r.value);
           break;
         }
       }
 
-      if (respostaCerta) {
-        document.getElementById("quiz").style.display = "none";
-        document.getElementById("mensagem").style.display = "block";
-        mostrarFlor = true;
+      if (selecionada === -1) {
+        alert("Escolhe uma opção, meu amorzinho 💘");
+        return;
+      }
+
+      if (selecionada === quizzes[perguntaAtual].correta) {
+        acertos++;
+      }
+
+      perguntaAtual++;
+
+      if (perguntaAtual < quizzes.length) {
+        mostrarPergunta();
       } else {
-        alert("Hmm... tenta de novo com mais amor! 💘");
+        document.getElementById("quiz-container").style.display = "none";
+
+        if (etapa === 1) {
+          // Fim da etapa 1
+          document.getElementById("etapa-final").style.display = "block";
+          setTimeout(() => {
+            document.getElementById("etapa-final").style.display = "none";
+            etapa = 2;
+            quizzes = quizzesEtapa2;
+            perguntaAtual = 0;
+            document.getElementById("quiz-container").style.display = "block";
+            mostrarPergunta();
+          }, 3000); // 3 segundos
+        } else {
+          // Fim da etapa 2
+          document.getElementById("mensagem").style.display = "block";
+          document.getElementById("acertos").textContent = acertos;
+          mostrarFlor = true;
+        }
       }
     }
 
