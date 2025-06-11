@@ -21,11 +21,21 @@
       display: none;
       animation: fadeIn 3s ease-in forwards;
     }
-    #botao {
+    #quiz {
       position: absolute;
-      top: 80%;
+      top: 20%;
       left: 50%;
       transform: translateX(-50%);
+      color: white;
+      text-align: center;
+      font-family: 'Courier New', monospace;
+      font-size: 20px;
+      background-color: rgba(0,0,0,0.7);
+      padding: 20px;
+      border-radius: 10px;
+    }
+    #quiz button {
+      margin-top: 15px;
       padding: 10px 20px;
       font-size: 18px;
       background-color: pink;
@@ -40,18 +50,66 @@
   </style>
 </head>
 <body>
-  <div id="mensagem">Feliz Dia dos Namorados! 💕<br>Te amo daqui até a Lua 🌕 <br> Você é a pessoa dos meus sonhos!.</div>
-  <button id="botao">Clique para a surpresa 💌</button>
+  <div id="mensagem">Feliz Dia dos Namorados, Gih! 💕<br>Te amo daqui até a Lua 🌕 <br>Você é a pessoa dos meus sonhos!.</div>
 
+    <div id="quiz1">
+    <p>Quando é meu aniversário?</p>
+    <label><input type="radio" name="resposta" value="errado"> 11/10</label><br>
+    <label><input type="radio" name="resposta" value="errado"> 08/08</label><br>
+    <label><input type="radio" name="resposta" value="certo"> 14/11</label><br>
+    <label><input type="radio" name="resposta" value="errado"> 08/03</label><br>
+    <button onclick="verificarResposta()">Confirmar</button>
+  </div>
+  
+    <div id="quiz2">
+    <p>Qual é minha cor favorita?</p>
+    <label><input type="radio" name="resposta" value="errado"> Azul</label><br>
+    <label><input type="radio" name="resposta" value="errado"> Rosa</label><br>
+    <label><input type="radio" name="resposta" value="errado"> Verde</label><br>
+    <label><input type="radio" name="resposta" value="certo"> Azul da cor dos meus olhos</label><br>
+    <button onclick="verificarResposta()">Confirmar</button>
+  </div>
+
+  <div id="quiz3">
+    <p>Qual é minha cor favorita?</p>
+    <label><input type="radio" name="resposta" value="errado"> Azul</label><br>
+    <label><input type="radio" name="resposta" value="errado"> Rosa</label><br>
+    <label><input type="radio" name="resposta" value="errado"> Verde</label><br>
+    <label><input type="radio" name="resposta" value="certo"> Azul da cor dos meus olhos</label><br>
+    <button onclick="verificarResposta()">Confirmar</button>
+  </div>
+  
+    <div id="quiz3">
+    <p>Qual é o apelido carinhoso que eu mais uso com você?</p>
+    <label><input type="radio" name="resposta" value="errado"> Gih</label><br>
+    <label><input type="radio" name="resposta" value="errado"> Gigi</label><br>
+    <label><input type="radio" name="resposta" value="certo"> Peidorreira</label><br>
+    <label><input type="radio" name="resposta" value="errado"> Bb</label><br>
+    <button onclick="verificarResposta()">Confirmar</button>
+  </div>
+  
   <script>
     let mostrarFlor = false;
     let k = 5;
 
-    document.getElementById("botao").onclick = () => {
-      mostrarFlor = true;
-      document.getElementById("botao").style.display = "none";
-      document.getElementById("mensagem").style.display = "block";
-    };
+    function verificarResposta() {
+      const opcoes = document.getElementsByName("resposta");
+      let respostaCerta = false;
+      for (let opcao of opcoes) {
+        if (opcao.checked && opcao.value === "certo") {
+          respostaCerta = true;
+          break;
+        }
+      }
+
+      if (respostaCerta) {
+        document.getElementById("quiz").style.display = "none";
+        document.getElementById("mensagem").style.display = "block";
+        mostrarFlor = true;
+      } else {
+        alert("Hmm... tenta de novo com mais amor! 💘");
+      }
+    }
 
     function setup() {
       createCanvas(windowWidth, windowHeight);
